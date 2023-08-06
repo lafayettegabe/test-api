@@ -1,7 +1,5 @@
 import './globals.css'
-import { Inter } from 'next/font/google'
-
-const inter = Inter({ subsets: ['latin'] })
+import { GlobalContextProvider } from './contexts/store'
 
 export const metadata = {
   title: 'Create Next App',
@@ -15,7 +13,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+        <body className="flex flex-col items-center justify-center min-h-screen py-2">
+          <main className="flex flex-col items-center justify-center flex-1 px-20 text-center">
+            <GlobalContextProvider>
+              {children}
+            </GlobalContextProvider>
+          </main>
+        </body>
     </html>
   )
 }
