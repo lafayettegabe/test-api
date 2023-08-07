@@ -21,9 +21,9 @@ function Validator(): JSX.Element {
       '5551234567890', 
     ];
 
-    if (userId && data.credits)
+    if (userId && parseInt(data.credits) > 0)
       try {
-        const apiResults = await runApiCalls(numbersToRun, data.email);
+        const apiResults = await runApiCalls(numbersToRun, data);
         setResults(apiResults);
       } catch (error) {
         console.error('Error:', error);

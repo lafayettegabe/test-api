@@ -1,5 +1,4 @@
 'use client';
-import { useEffect } from 'react';
 import { AuthCheck } from './Authenticated';
 import Validator from './Validator'
 import { useGlobalContext } from './contexts/store';
@@ -7,6 +6,8 @@ import { Button } from 'antd';
 
 function Home() {
   const { userId, setUserId, data, setData } = useGlobalContext();
+  
+  localStorage.setItem('token', data.accessToken);
 
   return (
     <>
@@ -17,11 +18,9 @@ function Home() {
         {/* logout button */}
         <Button type="primary" onClick={() => {
           {/* clear local storage tokens */}
-          localStorage.removeItem('accessToken');
-          localStorage.removeItem('refreshToken');
-          localStorage.removeItem('idToken');
+          localStorage.removeItem('token');
           setUserId('');
-          setData({ email: '', credits: '' });
+          setData({ email: '', credits: '', sub: '', accessToken: '' });
         }}>Logout</Button>
       </div>
       <Validator />

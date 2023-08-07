@@ -7,11 +7,6 @@ export function AuthCheck<P>(WrappedComponent: any) {
     const router = useRouter();
     const { userId } = useGlobalContext();
 
-    type DataType = {
-      email: string;
-      credits: string;
-    }
-
     useEffect(() => {
       if (userId === '' || userId === null) {
         console.log('No userId found, redirecting to login page...');

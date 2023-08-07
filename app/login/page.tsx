@@ -1,8 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Layout, Tabs, Form, Input, Button } from 'antd';
-import { serverHandleLogin, serverHandleRegistration, getUser } from './Auth';
+import { 
+  signUp, 
+  signIn,
+  keepLogin,
+ } from '../auth';
 import { useGlobalContext } from '../contexts/store';
 import { useRouter } from 'next/navigation';
 
@@ -18,33 +22,35 @@ const LoginPage: React.FC = () => {
   const handleLogin = async (values: any) => {
     setLoading(true);
 
-    interface userAuth {
-      IdToken: string | null;
-      AccessToken: string | null;
-      RefreshToken: string | null;
-    }
-
     try {
-      const data : userAuth = await serverHandleLogin(values);
+      let apidata = await signIn(values);
 
-      //const idToken = data.IdToken;
-      const accessToken = data.AccessToken;
-      //const refreshToken = data.RefreshToken;
+      for (const key in apidata) {
+        const name = apidata[key].Name.replace("custom:", "");
+        apidata[name] = apidata[key].Value;
+        delete apidata[key];
+    }
+      console.log(apidata);
 
-      const user = await getUser(accessToken || '');
-      
-      if (user) {
-        setUserId(user.Username);
+      setData(apidata);
+      setUserId(apidata.sub);
+      router.push('/');
+    } catch (error : any) {
+      if (error.message === 'User is not confirmed.') {
+        setLoading(false);
         setData({
-          email: user.UserAttributes.find((attr: { Name: string; }) => attr.Name === "email").Value,
-          credits: user.UserAttributes.find((attr: { Name: string; }) => attr.Name === "custom:credits").Value
-        });
+          email: values.email,
+          credits: '',
+          sub: '',
+          accessToken: '',
+        })
+        router.push('/login/verify');
       }
-    } catch (error) {
       console.error('Login error:', error);
     } finally {
+      // save token to local storage
+      console.log(data);
       setLoading(false);
-      router.push('/');
     }
   };
 
@@ -52,13 +58,38 @@ const LoginPage: React.FC = () => {
     setRegisterLoading(true);
 
     try {
-      const data = await serverHandleRegistration(values);
+      const data = await signUp(values)
+      console.log(data);
     } catch (error) {
       console.error('Registration error:', error);
     } finally {
       setRegisterLoading(false);
     }
   };
+
+  useEffect(() => {
+    // If user is already logged in or have storage token, redirect to home page
+    if(localStorage.getItem('token') !== null) {
+      const token = localStorage.getItem('token');
+      keepLogin(token)
+        .then((data) => {
+          for (const key in data) {
+            const name = data[key].Name.replace("custom:", "");
+            data[name] = data[key].Value;
+            delete data[key];
+          }
+          console.log(data);
+          setData(data);
+          setUserId(data.sub);
+          router.push('/');
+        })
+        .catch((error) => {
+          console.error(error);
+        }
+      );
+    }
+  }, [userId, router, setData, setUserId]);
+
 
   return (
     <Layout className="layout">

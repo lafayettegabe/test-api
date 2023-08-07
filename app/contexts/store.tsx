@@ -4,6 +4,8 @@ import { createContext, useState, useContext, ReactNode, Dispatch, SetStateActio
 type DataType = {
   email: string;
   credits: string;
+  sub: string;
+  accessToken: string;
 }
 
 interface ContextProps {
@@ -16,13 +18,13 @@ interface ContextProps {
 const GlobalContext = createContext<ContextProps>({
   userId: '',
   setUserId: (): string => '',
-  data: { email: '', credits: '' },
-  setData: (): DataType => ({ email: '', credits: '' }),
+  data: { email: '', credits: '', sub: '', accessToken: '' },
+  setData: (): DataType => ({ email: '', credits: '', sub: '', accessToken: '' }),
 });
 
 export const GlobalContextProvider = ({ children }: { children: ReactNode }) => {
   const [userId, setUserId] = useState('');
-  const [data, setData] = useState<DataType>({ email: '', credits: '' });
+  const [data, setData] = useState<DataType>({ email: '', credits: '', sub: '', accessToken: '' });
 
   return (
     <GlobalContext.Provider value={{ userId, setUserId, data, setData }}>
