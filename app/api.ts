@@ -13,7 +13,7 @@ type DataType = {
   email: string;
   credits: string;
   sub: string;
-  acessToken: string;
+  accessToken: string;
 }
 
 export async function runApiCalls( numbers: string[], user: DataType ): Promise<ApiResult[]> {
@@ -35,7 +35,7 @@ export async function runApiCalls( numbers: string[], user: DataType ): Promise<
     if(newCredits < 0) {
       throw new Error('Insufficient credits');
     } else {
-      await bill(user.acessToken, newCredits.toString());
+      await bill(user.accessToken, newCredits.toString());
     }
 
     console.log('Billing complete.')
