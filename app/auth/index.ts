@@ -59,13 +59,7 @@ const signIn = async (values: any) => {
   const data = await client.send(command);
   const tokens = data.AuthenticationResult;
 
-  const userCommand = new GetUserCommand({
-    AccessToken: tokens.AccessToken as string,
-  });
-
-  const user = await client.send(userCommand);
-
-  return { ...user.UserAttributes, 4: {Name: 'accessToken', Value: tokens.AccessToken} };
+  return tokens;
 };
 
 // ------------------------------------------------------------------------------------------------------------

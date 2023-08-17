@@ -9,6 +9,7 @@ import {
  } from '../auth';
 import { useGlobalContext } from '../contexts/store';
 import { useRouter } from 'next/navigation';
+import jwt from 'jsonwebtoken';
 
 const { Content } = Layout;
 const { TabPane } = Tabs;
@@ -23,14 +24,10 @@ const LoginPage: React.FC = () => {
     setLoading(true);
 
     try {
-      let apidata = await signIn(values);
+      const tokens = await signIn(values);
 
-      for (const key in apidata) {
-        const name = apidata[key].Name.replace("custom:", "");
-        apidata[name] = apidata[key].Value;
-        delete apidata[key];
-    }
-      console.log(apidata);
+      const decodedIdToken = jwt.decode(tokens.IdToken as string);
+      console.log('decodedIdToken: ', decodedIdToken);
 
       setData(apidata);
       setUserId(apidata.sub);
